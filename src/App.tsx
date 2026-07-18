@@ -261,7 +261,7 @@ export default function App() {
               
               <div className="flex flex-col items-center text-center mt-2">
                 <h1 className="text-xl font-bold tracking-wider text-white font-sans">webliox</h1>
-                <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-0.5">the developer's portal</p>
+                <p className="text-[11px] text-indigo-400 font-sans font-medium tracking-wide mt-1.5">Turn Any Website Into an App.</p>
               </div>
 
               {/* Minimal delicate progress indicator */}

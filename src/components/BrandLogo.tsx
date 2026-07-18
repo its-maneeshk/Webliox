@@ -57,16 +57,31 @@ export default function BrandLogo({ size = 48, className = '', animate = true }:
             </filter>
           </defs>
 
-          {/* Glowing W Path (Continuous high-quality neon wave) */}
+          {/* Glowing code brackets representing the web/development portal [ ] */}
           <path
-            d="M 18,28 
-               C 22,58 32,78 40,78 
-               C 46,78 50,56 50,48
-               C 50,40 54,22 60,22 
-               C 66,22 70,52 74,74 
-               C 76,82 82,82 85,74"
+            d="M 18,25 L 10,25 L 10,75 L 18,75"
             stroke="url(#brand-grad)"
-            strokeWidth="7"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.4"
+            className={animate ? 'path-glow-animation' : ''}
+          />
+          <path
+            d="M 82,25 L 90,25 L 90,75 L 82,75"
+            stroke="url(#brand-grad)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity="0.4"
+            className={animate ? 'path-glow-animation' : ''}
+          />
+
+          {/* Glowing W Path (Symmetrical, high-tech, geometric) */}
+          <path
+            d="M 24,32 L 39,70 L 50,48 L 61,70 L 76,32"
+            stroke="url(#brand-grad)"
+            strokeWidth="8"
             strokeLinecap="round"
             strokeLinejoin="round"
             filter="url(#glow)"
@@ -75,17 +90,12 @@ export default function BrandLogo({ size = 48, className = '', animate = true }:
           
           {/* Inner metallic highlight path */}
           <path
-            d="M 18,28 
-               C 22,58 32,78 40,78 
-               C 46,78 50,56 50,48
-               C 50,40 54,22 60,22 
-               C 66,22 70,52 74,74 
-               C 76,82 82,82 85,74"
+            d="M 24,32 L 39,70 L 50,48 L 61,70 L 76,32"
             stroke="#ffffff"
-            strokeWidth="1.5"
+            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            opacity="0.7"
+            opacity="0.8"
           />
         </svg>
 

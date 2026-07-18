@@ -6,7 +6,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   ArrowLeft, ArrowRight, RotateCw, ExternalLink, Globe, 
-  Send, Sparkles, CheckSquare, Film, Play, Image, Type, Palette
+  Send, Sparkles, CheckSquare, Film, Play, Image, Type, Palette,
+  Shield, Terminal, Activity, Zap
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { WebApp } from '../types';
@@ -18,6 +19,9 @@ interface WebPreviewerProps {
 }
 
 export default function WebPreviewer({ app, onClose, onMediaPlaying }: WebPreviewerProps) {
+  const adShieldActive = localStorage.getItem('webliox_adshield_active') !== 'false';
+  const dnsEngine = localStorage.getItem('webliox_dns_engine') || 'cloudflare';
+
   const [isLoading, setIsLoading] = useState(true);
   const [iframeError, setIframeError] = useState(false);
   const [simulatedProgress, setSimulatedProgress] = useState(10);
@@ -63,7 +67,7 @@ export default function WebPreviewer({ app, onClose, onMediaPlaying }: WebPrevie
 
   // Determine if URL is iframe-safe or blocks iframes (X-Frame-Options restrictions)
   const isIframeBlocked = (url: string): boolean => {
-    const blockedKeywords = ['chatgpt', 'openai', 'notion', 'netflix', 'canva', 'spotify', 'google', 'government', 'erp'];
+    const blockedKeywords = ['chatgpt', 'openai', 'notion', 'netflix', 'canva', 'spotify', 'google', 'government', 'erp', 'net27'];
     return blockedKeywords.some(keyword => url.toLowerCase().includes(keyword));
   };
 
@@ -109,14 +113,40 @@ export default function WebPreviewer({ app, onClose, onMediaPlaying }: WebPrevie
     setIsTyping(true);
 
     setTimeout(() => {
-      let reply = "That's an interesting idea! How can we implement that inside our WebHub structure?";
-      if (userMsg.toLowerCase().includes('hello') || userMsg.toLowerCase().includes('hi')) {
-        reply = "Hello there! Let's build some amazing software. What are we brainstorming today?";
-      } else if (userMsg.toLowerCase().includes('code') || userMsg.toLowerCase().includes('react')) {
-        reply = "To code this in React Native, we would use a <WebView> from 'react-native-webview'. It lets us bypass browser sandbox headers seamlessly on mobile!";
-      } else if (userMsg.toLowerCase().includes('design') || userMsg.toLowerCase().includes('canva')) {
-        reply = "Design is everything. Pairing consistent layout spacing, clean Material Design 3 guidelines, and high-contrast typography will set WebHub apart!";
+      const msg = userMsg.toLowerCase();
+      let reply = "";
+
+      const genericReplies = [
+        "That's an interesting approach! How can we adapt this concept to optimize our launcher workflow?",
+        "I like where you're going with this. Would you like to map out a quick UI mockup or jump straight into the database schema?",
+        "That's a great question. In full-stack web architectures, we would typical proxy this requests to prevent CORS issues.",
+        "Let's explore that deeper! What are the primary user interactions you want to focus on for this custom component?",
+        "Fascinating concept! We can implement smooth page exits using Framer Motion's AnimatePresence for a true native app feel.",
+        "That makes total sense. We can use client-side state hooks first, and then easily synchronize it with SQLite or Firestore when ready.",
+        "Excellent! Let's draft a simple high-level flowchart of how the state flows from user inputs to our preview window.",
+        "I'm on board. Tell me more about your design vision: are we going with a sleek dark slate theme or a modern light interface?"
+      ];
+
+      if (msg.includes('hello') || msg.includes('hi') || msg.includes('hey') || msg.includes('hola')) {
+        reply = "Hello there! Welcome to the Webliox AI-assisted workspace. What amazing ideas are we brainstorming today?";
+      } else if (msg.includes('are you free') || msg.includes('busy') || msg.includes('available')) {
+        reply = "I am absolutely free and always at your service! As an AI companion built directly into Webliox, I don't sleep. What can I code or design with you right now?";
+      } else if (msg.includes('code') || msg.includes('react') || msg.includes('html') || msg.includes('javascript') || msg.includes('typescript')) {
+        reply = "Coding is where the magic happens! To turn any website into a mobile app, we bundle React with Native WebViews. This completely bypasses standard browser sandbox limitations on device compiles!";
+      } else if (msg.includes('design') || msg.includes('ui') || msg.includes('ux') || msg.includes('palette') || msg.includes('css')) {
+        reply = "For high-fidelity visual design, we prioritize spatial pacing, crisp typography like Plus Jakarta Sans, single-pixel borders for elevated boundaries, and balanced negative space. It feels incredibly premium!";
+      } else if (msg.includes('thank') || msg.includes('thanks') || msg.includes('appreciate')) {
+        reply = "You are very welcome! Helping you build gorgeous full-stack applications is what I do best. Let me know what we should work on next!";
+      } else if (msg.includes('name') || msg.includes('who are you')) {
+        reply = "I am ChatGPT, your dynamic AI development assistant! I can help you architect layouts, plan components, write state handlers, and brainstorm full-stack structures.";
+      } else if (msg.includes('help') || msg.includes('what can you do')) {
+        reply = "I can assist you with coding, designing layouts, drafting documentation, planning user journeys, or brainstorming features for any website you want to transform into an app. Ask me anything!";
+      } else {
+        // Pick a random, highly creative generic reply to ensure it is never repetitive
+        const randomIndex = Math.floor(Math.random() * genericReplies.length);
+        reply = genericReplies[randomIndex];
       }
+
       setChatMessages(prev => [...prev, { sender: 'assistant', text: reply }]);
       setIsTyping(false);
     }, 1000);
@@ -171,14 +201,6 @@ export default function WebPreviewer({ app, onClose, onMediaPlaying }: WebPrevie
             <p className="text-[10px] text-slate-500 font-mono mt-1">{app.url}</p>
           </div>
         ) : null}
-
-        {/* BROWSER SANDBOX BLOCK EDUCATION BAR (Crucial for learning!) */}
-        {blocksIframe && !isLoading && (
-          <div className="bg-bg-card border-b border-white/10 p-3 text-[10px] text-slate-300 leading-relaxed shrink-0">
-            <span className="font-bold text-indigo-400 uppercase">🎓 Junior Developer Lesson: Sandbox Bypass</span><br/>
-            Because we are in a web browser preview, standard security <code>X-Frame-Options: DENY</code> blocks us from rendering {app.name} inside an iframe. However, when we deploy this as a native Android app with React Native's <code>WebView</code>, <strong>it bypasses this completely!</strong> To give you a perfect experience, we have booted a beautiful high-fidelity interactive simulation of the app below.
-          </div>
-        )}
 
         {/* ACTUAL WEBPAGE (If safe) or HIGH FIDELITY SIMULATION (If blocked) */}
         <div className="flex-1 relative overflow-hidden bg-[#000]">
@@ -409,22 +431,118 @@ export default function WebPreviewer({ app, onClose, onMediaPlaying }: WebPrevie
                   </div>
                 </div>
               ) : (
-                /* DEFAULT PORTAL GENERIC SIMULATOR */
-                <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-bg-darkest h-full font-sans">
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${app.color} flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-black/40`}>
-                    <Globe size={20} />
+                /* DEFAULT PORTAL GENERIC SIMULATOR - REDESIGNED MULTI-COMPARTMENT DASHBOARD */
+                <div className="flex-1 flex flex-col bg-[#08090d] h-full font-sans text-slate-200">
+                  {/* Top Portal Mock Banner */}
+                  <div className="p-4 border-b border-white/5 bg-[#0d0e14] flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-lg bg-gradient-to-tr ${app.color} flex items-center justify-center text-white font-bold text-sm shadow-md`}>
+                        {app.name.charAt(0)}
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-white">{app.name}</h4>
+                        <p className="text-[10px] text-slate-400 font-medium">{app.category} Portal</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`text-[8px] font-mono px-2 py-0.5 rounded font-bold uppercase tracking-wider ${
+                        adShieldActive ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'bg-neutral-800 text-slate-500'
+                      }`}>
+                        🛡️ AdShield {adShieldActive ? 'ON' : 'OFF'}
+                      </span>
+                      <span className="text-[8px] font-mono px-2 py-0.5 rounded font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                        ⚡ {dnsEngine.toUpperCase()}
+                      </span>
+                    </div>
                   </div>
-                  <h3 className="text-xs font-bold text-slate-200 mt-4">Sandbox Protected Portal</h3>
-                  <p className="text-[10px] text-slate-500 mt-2 max-w-xs leading-relaxed">
-                    This custom portal is secured. Since custom websites frequently block browser-in-browser connections, use the action button above to launch this link in a standard high-speed window!
-                  </p>
-                  <button
-                    onClick={handleLaunchExternal}
-                    className="mt-4 flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-md shadow-indigo-500/10"
-                  >
-                    <span>Launch Website</span>
-                    <ExternalLink size={10} />
-                  </button>
+
+                  {/* Split body: Left Stats & Right Console Terminal */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar flex flex-col md:flex-row gap-4">
+                    {/* Left stats panel */}
+                    <div className="flex-1 space-y-3">
+                      <div className="p-3.5 rounded-xl bg-bg-card border border-white/5 space-y-2.5">
+                        <div className="flex justify-between items-center text-[10px] text-slate-400 border-b border-white/5 pb-1.5">
+                          <span className="font-bold uppercase tracking-wide">Shield Statistics</span>
+                          <span className="text-emerald-400 font-mono font-bold">Online</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="bg-[#0b0c10] p-2 rounded-lg border border-white/5">
+                            <span className="text-[8px] text-slate-400 block font-mono">AD BLOCKER</span>
+                            <span className="text-xs font-black text-slate-200 mt-0.5 block">
+                              {adShieldActive ? '24 blocked' : '0 (Off)'}
+                            </span>
+                          </div>
+                          <div className="bg-[#0b0c10] p-2 rounded-lg border border-white/5">
+                            <span className="text-[8px] text-slate-400 block font-mono">TRACKERS</span>
+                            <span className="text-xs font-black text-slate-200 mt-0.5 block">
+                              {adShieldActive ? '18 filtered' : '0 (Off)'}
+                            </span>
+                          </div>
+                          <div className="bg-[#0b0c10] p-2 rounded-lg border border-white/5">
+                            <span className="text-[8px] text-slate-400 block font-mono">DNS TUNNEL</span>
+                            <span className="text-xs font-black text-slate-200 mt-0.5 block font-mono">
+                              {dnsEngine === 'cloudflare' ? '1.1.1.1' : dnsEngine === 'adguard' ? 'AdGuard' : dnsEngine === 'google' ? '8.8.8.8' : 'Carrier'}
+                            </span>
+                          </div>
+                          <div className="bg-[#0b0c10] p-2 rounded-lg border border-white/5">
+                            <span className="text-[8px] text-slate-400 block font-mono">LATENCY</span>
+                            <span className="text-xs font-black text-slate-200 mt-0.5 block font-mono">
+                              {dnsEngine === 'cloudflare' ? '11ms' : dnsEngine === 'adguard' ? '22ms' : dnsEngine === 'google' ? '18ms' : '45ms'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Educational notice block */}
+                      <div className="p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/10 text-[9.5px] text-slate-400 leading-relaxed space-y-1.5">
+                        <p className="font-bold text-indigo-300">Why are you seeing a simulation?</p>
+                        <p>
+                          Standard browser environments enforce sandbox policies (CORS and X-Frame-Options SAMEORIGIN) that block custom sites like <strong className="text-indigo-200">{app.url.replace('https://', '')}</strong> or ChatGPT from running inside nested iframes.
+                        </p>
+                        <p>
+                          When you build or compile Webliox into a <strong>Native Mobile APK</strong>, it uses an unrestricted WebView that ignores browser sandbox blocks to load everything natively!
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right console Terminal panel */}
+                    <div className="w-full md:w-[220px] bg-black/80 rounded-xl border border-white/15 p-3 font-mono text-[9px] text-emerald-400 space-y-1.5 flex flex-col justify-between shrink-0">
+                      <div>
+                        <div className="flex items-center gap-1.5 text-slate-400 mb-2 border-b border-white/5 pb-1">
+                          <Terminal size={10} />
+                          <span className="text-[8px] font-bold uppercase font-sans">Sandbox Shield Console</span>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-slate-400"># webliox-cli --dns={dnsEngine}</p>
+                          <p className="text-emerald-500">✓ Connected to {dnsEngine === 'cloudflare' ? 'Cloudflare Warp 1.1.1.1' : dnsEngine === 'adguard' ? 'AdGuard Secure DNS' : dnsEngine === 'google' ? 'Google 8.8.8.8' : 'Standard Gateway'}</p>
+                          <p className="text-slate-400"># webliox-cli --adblock={adShieldActive ? 'on' : 'off'}</p>
+                          <p className="text-emerald-500">{adShieldActive ? '✓ Shield active: Filtered 42 scripts & tracker nodes' : '⚠ AdShield is currently disabled'}</p>
+                          <p className="text-slate-400"># curl -I {app.url}</p>
+                          <p className="text-amber-500">⚠ Sandbox detected: Frame-ancestors restricted</p>
+                          <p className="text-indigo-400">✦ Native WebView sandbox ready to intercept</p>
+                        </div>
+                      </div>
+                      <div className="pt-2 text-[8px] text-slate-500 border-t border-white/5 flex justify-between items-center">
+                        <span>SYS_STATUS: ACTIVE</span>
+                        <span>PORT 3000</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer Core CTA Action Block */}
+                  <div className="p-4 bg-[#0d0e14] border-t border-white/5 text-center flex flex-col gap-2">
+                    <button
+                      onClick={handleLaunchExternal}
+                      className="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/10 cursor-pointer transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+                    >
+                      <Zap size={13} className="fill-current text-amber-300 animate-pulse" />
+                      <span>Launch Secure Native Sandbox</span>
+                      <ExternalLink size={12} />
+                    </button>
+                    <p className="text-[9px] text-slate-500 font-sans">
+                      Renders the website in a standard clean viewport with simulated active shield proxies.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
