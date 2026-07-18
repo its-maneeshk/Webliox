@@ -9,6 +9,7 @@ import DeviceFrame from './components/DeviceFrame';
 import LauncherHome from './components/LauncherHome';
 import WebPreviewer from './components/WebPreviewer';
 import AddWebsiteForm from './components/AddWebsiteForm';
+import InfoModal from './components/InfoModal';
 
 // Initial preloaded default applications
 const DEFAULT_APPS: WebApp[] = [
@@ -89,6 +90,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState<'home' | 'add-app'>('home');
   const [isDeviceMode, setIsDeviceMode] = useState(false);
   const [isMediaPlaying, setIsMediaPlaying] = useState(false);
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   // Sync launcher app state changes to local storage
   useEffect(() => {
@@ -100,11 +102,32 @@ export default function App() {
     localStorage.setItem('webhub_recents_v1', JSON.stringify(recentIds));
   }, [recentIds]);
 
+  // Push initial history state sentinel to prevent accidental back exit
+  useEffect(() => {
+    if (!window.history.state) {
+      window.history.replaceState({ view: 'home_base' }, '');
+      window.history.pushState({ view: 'home_active' }, '');
+    }
+  }, []);
+
   // Intercept browser back / physical device back button
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
       const state = event.state;
-      if (!state) {
+      
+      if (!state || state.view === 'home_base') {
+        if (selectedApp) {
+          setSelectedApp(null);
+          setIsMediaPlaying(false);
+          window.history.pushState({ view: 'home_active' }, '');
+        } else if (currentView === 'add-app') {
+          setCurrentView('home');
+          window.history.pushState({ view: 'home_active' }, '');
+        } else {
+          // Stay on home screen and restore active history sentinel so PWA/app doesn't exit
+          window.history.pushState({ view: 'home_active' }, '');
+        }
+      } else if (state.view === 'home_active') {
         setSelectedApp(null);
         setCurrentView('home');
         setIsMediaPlaying(false);
@@ -128,7 +151,7 @@ export default function App() {
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [apps]);
+  }, [apps, selectedApp, currentView]);
 
   // Launch application portal
   const handleLaunchApp = (app: WebApp) => {
@@ -242,8 +265,12 @@ export default function App() {
           onToggleFavorite={handleToggleFavorite}
           onDeleteApp={handleDeleteApp}
           recentApps={recentApps}
+          onInfoClick={() => setIsInfoOpen(true)}
         />
       )}
+
+      {/* Info & Legal Terms Modal Overlay */}
+      <InfoModal isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />
     </DeviceFrame>
   );
 }

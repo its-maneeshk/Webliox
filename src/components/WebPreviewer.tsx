@@ -181,15 +181,16 @@ export default function WebPreviewer({ app, onClose, onMediaPlaying }: WebPrevie
         )}
 
         {/* ACTUAL WEBPAGE (If safe) or HIGH FIDELITY SIMULATION (If blocked) */}
-        <div className="flex-1 relative overflow-hidden bg-[#000] flex flex-col">
+        <div className="flex-1 relative overflow-hidden bg-[#000]">
           {!blocksIframe ? (
             /* Render actual webpage inside iframe */
             <iframe
               ref={iframeRef}
               src={app.url}
-              className="w-full h-full border-none bg-white"
+              className="absolute inset-0 w-full h-full border-none bg-[#000]"
               title={app.name}
-              sandbox="allow-scripts allow-same-origin allow-forms"
+              allowFullScreen
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write; clipboard-read"
               onError={() => setIframeError(true)}
             />
           ) : (

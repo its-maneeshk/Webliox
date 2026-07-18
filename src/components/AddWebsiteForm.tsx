@@ -106,23 +106,23 @@ export default function AddWebsiteForm({ onAddApp, onCancel }: AddWebsiteFormPro
     <div id="add-portal-form-root" className="flex-1 flex flex-col bg-[#000] overflow-y-auto select-none p-6 text-[#e0e0e0] custom-scrollbar">
       
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6 shrink-0">
+      <div className="flex items-center gap-3.5 mb-6 shrink-0">
         <button
           onClick={onCancel}
-          className="p-1.5 rounded-full hover:bg-white/5 text-slate-400 hover:text-white transition-colors cursor-pointer"
+          className="p-2 rounded-full hover:bg-white/10 text-slate-300 hover:text-white transition-all cursor-pointer flex items-center justify-center hover:scale-105 active:scale-95"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={18} />
         </button>
         <div>
-          <h2 className="text-sm font-bold text-white">Add Web Application</h2>
-          <p className="text-[10px] text-slate-400">Expand your launcher drawer with custom portals</p>
+          <h2 className="text-base font-bold text-white tracking-tight">Add Web Application</h2>
+          <p className="text-xs text-slate-400 mt-0.5">Expand your launcher drawer with custom portals</p>
         </div>
       </div>
 
       {/* Preset App Suggestions (Awesome UX!) */}
       <div className="mb-6 shrink-0">
-        <div className="flex items-center gap-1.5 text-[10px] font-bold text-indigo-400 tracking-wider uppercase mb-2.5 font-mono">
-          <Compass size={11} />
+        <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-400 tracking-wider uppercase mb-3 font-sans">
+          <Compass size={13} />
           <span>Quick Preset Suggestions</span>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -131,9 +131,9 @@ export default function AddWebsiteForm({ onAddApp, onCancel }: AddWebsiteFormPro
               key={preset.name}
               type="button"
               onClick={() => handlePresetSelect(preset)}
-              className="text-[10px] font-semibold bg-bg-card hover:bg-[#25232a] text-slate-300 hover:text-white px-3 py-2 rounded-xl border border-white/5 flex items-center gap-1.5 transition-all cursor-pointer"
+              className="text-xs font-semibold bg-bg-card hover:bg-[#25232a] text-slate-200 hover:text-white px-3.5 py-2 rounded-xl border border-white/10 flex items-center gap-2 transition-all cursor-pointer hover:scale-[1.02] shadow-sm"
             >
-              <span className={`w-1.5 h-1.5 rounded-full bg-gradient-to-tr ${preset.color}`} />
+              <span className={`w-2 h-2 rounded-full bg-gradient-to-tr ${preset.color}`} />
               <span>{preset.name}</span>
             </button>
           ))}
@@ -141,60 +141,60 @@ export default function AddWebsiteForm({ onAddApp, onCancel }: AddWebsiteFormPro
       </div>
 
       {/* Main Form */}
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-5 justify-between">
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-6 justify-between">
         
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           
           {/* Form Error Alert */}
           {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-[11px] font-bold">
+            <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold">
               {error}
             </div>
           )}
 
           {/* App Name Input */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">Application Name</label>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider font-sans">Application Name</label>
             <input
               type="text"
               placeholder="e.g., My College Portal"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full h-11 px-4 rounded-xl bg-bg-card border border-white/5 text-xs focus:border-indigo-500/40 text-slate-200 outline-none transition-all focus:ring-1 focus:ring-indigo-500/10"
+              className="w-full h-11 px-4 rounded-xl bg-bg-card border border-white/10 text-xs focus:border-indigo-500/50 text-slate-200 outline-none transition-all focus:ring-1 focus:ring-indigo-500/20"
             />
           </div>
 
           {/* Website Link URL */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono flex items-center gap-1">
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider font-sans flex items-center gap-1.5">
               <span>Web Address URL</span>
-              <span className="text-[9px] text-slate-600 font-mono italic">(Automatic HTTPS)</span>
+              <span className="text-[10px] text-slate-500 font-medium italic">(Automatic HTTPS)</span>
             </label>
             <div className="relative">
-              <Globe size={13} className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-500" />
+              <Globe size={14} className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 placeholder="e.g., erp.myuniversity.edu"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                className="w-full h-11 pl-10 pr-4 rounded-xl bg-bg-card border border-white/5 text-xs focus:border-indigo-500/40 text-slate-200 outline-none transition-all focus:ring-1 focus:ring-indigo-500/10"
+                className="w-full h-11 pl-10 pr-4 rounded-xl bg-bg-card border border-white/10 text-xs focus:border-indigo-500/50 text-slate-200 outline-none transition-all focus:ring-1 focus:ring-indigo-500/20"
               />
             </div>
           </div>
 
           {/* Category Select Grid */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">Category Group</label>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider font-sans">Category Group</label>
             <div className="grid grid-cols-3 gap-2">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setCategory(cat)}
-                  className={`py-2 rounded-xl text-[10px] font-bold border transition-all cursor-pointer ${
+                  className={`py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                     category === cat
-                      ? 'bg-indigo-600 border-indigo-500/20 text-white'
-                      : 'bg-bg-card border-white/5 text-slate-400 hover:text-slate-200 hover:bg-[#25232a]'
+                      ? 'bg-indigo-600 border-indigo-500/20 text-white shadow-md shadow-indigo-600/10'
+                      : 'bg-bg-card border-white/10 text-slate-300 hover:text-white hover:bg-[#25232a]'
                   }`}
                 >
                   {cat}
@@ -204,9 +204,9 @@ export default function AddWebsiteForm({ onAddApp, onCancel }: AddWebsiteFormPro
           </div>
 
           {/* Icon Picker */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">Portal Launcher Icon</label>
-            <div className="flex flex-wrap gap-2 p-3 bg-bg-card/40 rounded-xl border border-white/5">
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider font-sans">Portal Launcher Icon</label>
+            <div className="flex flex-wrap gap-2.5 p-3.5 bg-bg-card/40 rounded-xl border border-white/10">
               {ICONS.map((ico) => {
                 const isSelected = iconName === ico.name;
                 return (
@@ -214,24 +214,24 @@ export default function AddWebsiteForm({ onAddApp, onCancel }: AddWebsiteFormPro
                     key={ico.name}
                     type="button"
                     onClick={() => setIconName(ico.name)}
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer border ${
                       isSelected
-                        ? 'bg-indigo-600/20 border-indigo-500/30 text-indigo-400'
-                        : 'bg-bg-card border-white/5 text-slate-500 hover:text-slate-200 hover:bg-[#25232a]'
+                        ? 'bg-indigo-600/20 border-indigo-500/40 text-indigo-400 shadow-sm'
+                        : 'bg-bg-card border-white/10 text-slate-400 hover:text-slate-200 hover:bg-[#25232a]'
                     }`}
                     title={ico.label}
                   >
                     {/* Render helper icon */}
-                    <span className="scale-90">
-                      {ico.name === 'MessageSquare' && <MessageSquare size={14} />}
-                      {ico.name === 'Palette' && <Palette size={14} />}
-                      {ico.name === 'Camera' && <Camera size={14} />}
-                      {ico.name === 'Tv' && <Tv size={14} />}
-                      {ico.name === 'BookOpen' && <BookOpen size={14} />}
-                      {ico.name === 'ShieldCheck' && <ShieldCheck size={14} />}
-                      {ico.name === 'GraduationCap' && <GraduationCap size={14} />}
-                      {ico.name === 'LayoutDashboard' && <LayoutDashboard size={14} />}
-                      {ico.name === 'Globe' && <Globe size={14} />}
+                    <span className="scale-105">
+                      {ico.name === 'MessageSquare' && <MessageSquare size={16} />}
+                      {ico.name === 'Palette' && <Palette size={16} />}
+                      {ico.name === 'Camera' && <Camera size={16} />}
+                      {ico.name === 'Tv' && <Tv size={16} />}
+                      {ico.name === 'BookOpen' && <BookOpen size={16} />}
+                      {ico.name === 'ShieldCheck' && <ShieldCheck size={16} />}
+                      {ico.name === 'GraduationCap' && <GraduationCap size={16} />}
+                      {ico.name === 'LayoutDashboard' && <LayoutDashboard size={16} />}
+                      {ico.name === 'Globe' && <Globe size={16} />}
                     </span>
                   </button>
                 );
@@ -240,8 +240,8 @@ export default function AddWebsiteForm({ onAddApp, onCancel }: AddWebsiteFormPro
           </div>
 
           {/* Color Gradient Picker */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">Card Theme Color</label>
+          <div className="flex flex-col gap-2">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider font-sans">Card Theme Color</label>
             <div className="grid grid-cols-6 gap-2">
               {COLORS.map((col) => {
                 const isSelected = color === col.class;
@@ -250,12 +250,12 @@ export default function AddWebsiteForm({ onAddApp, onCancel }: AddWebsiteFormPro
                     key={col.class}
                     type="button"
                     onClick={() => setColor(col.class)}
-                    className={`h-8 rounded-lg bg-gradient-to-tr ${col.class} flex items-center justify-center text-white cursor-pointer relative transition-transform hover:scale-105`}
+                    className={`h-9 rounded-xl bg-gradient-to-tr ${col.class} flex items-center justify-center text-white cursor-pointer relative transition-transform hover:scale-105 shadow-sm`}
                     title={col.label}
                   >
                     {isSelected && (
-                      <span className="w-4 h-4 rounded-full bg-bg-darkest/80 flex items-center justify-center text-emerald-400">
-                        <Check size={10} className="stroke-[3]" />
+                      <span className="w-5 h-5 rounded-full bg-bg-darkest/80 flex items-center justify-center text-emerald-400 shadow-md">
+                        <Check size={11} className="stroke-[3]" />
                       </span>
                     )}
                   </button>
@@ -267,17 +267,17 @@ export default function AddWebsiteForm({ onAddApp, onCancel }: AddWebsiteFormPro
         </div>
 
         {/* Bottom Actions */}
-        <div className="flex gap-3 mt-6 border-t border-white/5 pt-4 shrink-0">
+        <div className="flex gap-3.5 mt-6 border-t border-white/10 pt-4 shrink-0">
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 h-11 rounded-xl bg-bg-card hover:bg-[#25232a] border border-white/5 text-slate-400 hover:text-slate-200 font-bold text-xs tracking-wide transition-colors cursor-pointer"
+            className="flex-1 h-11 rounded-xl bg-bg-card hover:bg-[#25232a] border border-white/10 text-slate-300 hover:text-white font-bold text-xs tracking-wide transition-colors cursor-pointer"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex-1 h-11 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs tracking-wide transition-all shadow-md shadow-indigo-600/10 cursor-pointer border border-indigo-500/20"
+            className="flex-1 h-11 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs tracking-wide transition-all shadow-md shadow-indigo-600/20 cursor-pointer border border-indigo-500/30 hover:scale-[1.01]"
           >
             Create Launcher
           </button>

@@ -7,7 +7,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   Search, Plus, Star, Clock, Trash2, ExternalLink, Globe,
   MessageSquare, Palette, Camera, Tv, BookOpen, ShieldCheck, 
-  GraduationCap, LayoutDashboard
+  GraduationCap, LayoutDashboard, Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { WebApp, AppCategory } from '../types';
@@ -19,6 +19,7 @@ interface LauncherHomeProps {
   onToggleFavorite: (id: string, e: React.MouseEvent) => void;
   onDeleteApp?: (id: string, e: React.MouseEvent) => void;
   recentApps: WebApp[];
+  onInfoClick: () => void;
 }
 
 // Icon mapper for dynamic lookups
@@ -177,6 +178,7 @@ export default function LauncherHome({
   onToggleFavorite,
   onDeleteApp,
   recentApps,
+  onInfoClick,
 }: LauncherHomeProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<AppCategory>('All');
@@ -270,6 +272,14 @@ export default function LauncherHome({
           )}
           <p className="text-xs text-slate-500 mt-1">launch your workspaces</p>
         </div>
+
+        <button
+          onClick={onInfoClick}
+          className="p-2.5 rounded-full bg-neutral-900 border border-white/10 text-slate-400 hover:text-white transition-all cursor-pointer flex items-center justify-center hover:scale-105 active:scale-95 shadow-lg shadow-black/20"
+          title="About & Legal terms"
+        >
+          <Info size={15} />
+        </button>
       </div>
 
       {/* Quick Search Bar (Styled as md3-pill) */}
@@ -295,17 +305,17 @@ export default function LauncherHome({
       </div>
 
       {/* Horizontal Category Chips */}
-      <div className="px-6 mb-5 overflow-x-auto whitespace-nowrap hide-scrollbar flex items-center gap-1.5 scroll-smooth relative z-10">
+      <div className="px-6 mb-5 overflow-x-auto whitespace-nowrap hide-scrollbar flex items-center gap-2 scroll-smooth relative z-10">
         {CATEGORIES.map(category => {
           const isSelected = selectedCategory === category;
           return (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-3.5 py-1.5 rounded-full text-[10px] font-bold tracking-wide transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
                 isSelected
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/10 border border-indigo-500/20'
-                  : 'bg-bg-card text-slate-400 hover:bg-[#25232a] hover:text-slate-200 border border-white/5'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 border border-indigo-500/30 scale-[1.02]'
+                  : 'bg-bg-card text-slate-300 hover:bg-[#25232a] hover:text-white border border-white/10'
               }`}
             >
               {category}
@@ -317,8 +327,8 @@ export default function LauncherHome({
       {/* Recent Applications Dashboard Section */}
       {recentApps.length > 0 && !searchQuery && selectedCategory === 'All' && (
         <div className="px-6 mb-6">
-          <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 tracking-wider uppercase mb-3">
-            <Clock size={11} className="text-indigo-400" />
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 tracking-wider uppercase mb-3 font-sans">
+            <Clock size={13} className="text-indigo-400" />
             <span>Recents</span>
           </div>
           <div className="flex gap-3 overflow-x-auto pb-1 hide-scrollbar">
@@ -327,12 +337,12 @@ export default function LauncherHome({
                 whileTap={{ scale: 0.95 }}
                 key={`recent-${app.id}`}
                 onClick={() => onLaunchApp(app)}
-                className="flex flex-col items-center gap-1 shrink-0 p-2 bg-bg-card/40 rounded-xl border border-white/5 w-[72px] cursor-pointer hover:bg-bg-card transition-colors"
+                className="flex flex-col items-center gap-1.5 shrink-0 p-2.5 bg-bg-card/40 rounded-2xl border border-white/5 w-[78px] cursor-pointer hover:bg-bg-card transition-all duration-200"
               >
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${app.color} flex items-center justify-center text-white shadow-md`}>
-                  {getIconComponent(app.iconName, 18)}
+                <div className={`w-11 h-11 rounded-2xl bg-gradient-to-tr ${app.color} flex items-center justify-center text-white shadow-md`}>
+                  {getIconComponent(app.iconName, 20)}
                 </div>
-                <span className="text-[10px] font-medium tracking-tight text-slate-300 truncate w-full text-center">
+                <span className="text-[11px] font-semibold tracking-tight text-slate-200 truncate w-full text-center">
                   {app.name}
                 </span>
               </motion.button>
@@ -344,8 +354,8 @@ export default function LauncherHome({
       {/* Favorites Panel Section */}
       {favoriteApps.length > 0 && !searchQuery && selectedCategory === 'All' && (
         <div className="px-6 mb-6">
-          <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 tracking-wider uppercase mb-3">
-            <Star size={11} className="text-amber-400 fill-amber-400" />
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-400 tracking-wider uppercase mb-3 font-sans">
+            <Star size={13} className="text-amber-400 fill-amber-400" />
             <span>Favorites</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -354,24 +364,24 @@ export default function LauncherHome({
                 whileTap={{ scale: 0.98 }}
                 key={`favorite-${app.id}`}
                 onClick={() => onLaunchApp(app)}
-                className="flex items-center justify-between p-3 rounded-xl bg-bg-card hover:bg-[#25232a] border border-white/5 cursor-pointer relative overflow-hidden group transition-all"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-bg-card hover:bg-[#25232a] border border-white/5 cursor-pointer relative overflow-hidden group transition-all"
               >
                 <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-amber-400 to-indigo-500"></div>
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-tr ${app.color} flex items-center justify-center text-white shrink-0`}>
-                    {getIconComponent(app.iconName, 14)}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className={`w-9 h-9 rounded-xl bg-gradient-to-tr ${app.color} flex items-center justify-center text-white shrink-0 shadow-md`}>
+                    {getIconComponent(app.iconName, 16)}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] font-bold text-slate-200 truncate">{app.name}</p>
-                    <p className="text-[9px] text-slate-500 truncate">{app.category}</p>
+                    <p className="text-xs font-semibold text-slate-100 truncate">{app.name}</p>
+                    <p className="text-[10px] text-slate-400 truncate font-medium">{app.category}</p>
                   </div>
                 </div>
                 <button
                   onClick={(e) => onToggleFavorite(app.id, e)}
-                  className="text-amber-400 hover:text-slate-400 transition-colors cursor-pointer"
+                  className="text-amber-400 hover:text-slate-400 transition-colors cursor-pointer p-1"
                   title="Remove Favorite"
                 >
-                  <Star size={13} className="fill-current" />
+                  <Star size={14} className="fill-current" />
                 </button>
               </motion.div>
             ))}
@@ -381,7 +391,7 @@ export default function LauncherHome({
 
       {/* Grid of Launcher Cards */}
       <div className="px-6 mb-6 flex-1">
-        <div className="flex items-center justify-between text-[10px] font-bold text-slate-500 tracking-wider uppercase mb-3">
+        <div className="flex items-center justify-between text-xs font-bold text-slate-400 tracking-wider uppercase mb-3 font-sans">
           <span>All Applications ({filteredApps.length})</span>
         </div>
 
@@ -404,50 +414,50 @@ export default function LauncherHome({
                   transition={{ duration: 0.2 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onLaunchApp(app)}
-                  className="group relative p-4 rounded-2xl bg-bg-card border border-white/5 hover:border-white/10 cursor-pointer flex flex-col justify-between h-[115px] hover:bg-[#25232a] transition-all shadow-sm overflow-hidden"
+                  className="group relative p-4 rounded-2xl bg-bg-card border border-white/5 hover:border-indigo-500/20 cursor-pointer flex flex-col justify-between h-[130px] hover:bg-[#25232a] transition-all shadow-md overflow-hidden"
                 >
                   {/* Decorative faint glow */}
-                  <div className={`absolute -inset-px rounded-2xl bg-gradient-to-tr ${app.color} opacity-0 group-hover:opacity-5 transition-opacity blur-xs pointer-events-none`}></div>
+                  <div className={`absolute -inset-px rounded-2xl bg-gradient-to-tr ${app.color} opacity-0 group-hover:opacity-10 transition-opacity blur-md pointer-events-none`}></div>
 
                   {/* Micro aesthetic website preview mockup */}
                   {renderMiniPreview(app)}
 
                   {/* Card top half: Icon & Favorites Star */}
                   <div className="flex justify-between items-start relative z-20">
-                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-tr ${app.color} flex items-center justify-center text-white shadow-md shadow-black/30 group-hover:scale-105 transition-transform`}>
-                      {getIconComponent(app.iconName, 17)}
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${app.color} flex items-center justify-center text-white shadow-md shadow-black/30 group-hover:scale-105 transition-transform`}>
+                      {getIconComponent(app.iconName, 18)}
                     </div>
 
-                    <div className="flex items-center gap-1 relative z-25">
+                    <div className="flex items-center gap-1.5 relative z-25">
                       <button
                         onClick={(e) => onToggleFavorite(app.id, e)}
-                        className={`p-1 rounded-full hover:bg-white/5 transition-colors ${
+                        className={`p-1.5 rounded-full hover:bg-white/10 transition-colors ${
                           app.isFavorite ? 'text-amber-400' : 'text-slate-500 hover:text-slate-300'
                         }`}
                         title={app.isFavorite ? 'Remove Favorite' : 'Mark Favorite'}
                       >
-                        <Star size={13} className={app.isFavorite ? 'fill-current' : ''} />
+                        <Star size={14} className={app.isFavorite ? 'fill-current' : ''} />
                       </button>
 
                       {onDeleteApp && (
                         <button
                           onClick={(e) => onDeleteApp(app.id, e)}
-                          className="p-1 rounded-full hover:bg-white/5 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-full hover:bg-white/10 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
                           title="Delete Application"
                         >
-                          <Trash2 size={13} />
+                          <Trash2 size={14} />
                         </button>
                       )}
                     </div>
                   </div>
 
                   {/* Card bottom half: Labels */}
-                  <div className="mt-3 min-w-0 relative z-20">
-                    <h3 className="font-bold text-slate-100 text-xs tracking-tight truncate flex items-center gap-1 group-hover:text-indigo-300 transition-colors">
+                  <div className="mt-4 min-w-0 relative z-20">
+                    <h3 className="font-bold text-slate-100 text-[13px] tracking-tight truncate flex items-center gap-1 group-hover:text-indigo-300 transition-colors">
                       {app.name}
-                      <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0 text-slate-400" />
+                      <ExternalLink size={11} className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0 text-slate-400" />
                     </h3>
-                    <p className="text-[10px] text-slate-500 font-medium truncate mt-0.5">{app.category}</p>
+                    <p className="text-[11px] text-slate-400 font-medium truncate mt-0.5">{app.category}</p>
                   </div>
                 </motion.div>
               ))}
@@ -457,14 +467,14 @@ export default function LauncherHome({
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={onAddAppClick}
-              className="p-4 rounded-2xl border border-dashed border-white/10 hover:border-indigo-500/30 bg-transparent hover:bg-bg-card/30 cursor-pointer flex flex-col justify-between h-[115px] text-left transition-all"
+              className="p-4 rounded-2xl border border-dashed border-white/15 hover:border-indigo-500/40 bg-transparent hover:bg-bg-card/40 cursor-pointer flex flex-col justify-between h-[130px] text-left transition-all"
             >
-              <div className="w-9 h-9 rounded-xl bg-bg-card border border-white/5 flex items-center justify-center text-slate-400 hover:text-white hover:border-white/10 transition-colors">
-                <Plus size={16} />
+              <div className="w-10 h-10 rounded-xl bg-bg-card border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:border-white/20 transition-colors shadow-md">
+                <Plus size={18} />
               </div>
-              <div>
-                <h3 className="font-bold text-slate-300 text-xs tracking-tight">ADD NEW</h3>
-                <p className="text-[10px] text-slate-500 font-medium mt-0.5">Integrate web apps</p>
+              <div className="mt-4">
+                <h3 className="font-bold text-slate-200 text-[13px] tracking-tight">ADD NEW</h3>
+                <p className="text-[11px] text-slate-400 font-medium mt-0.5">Integrate web apps</p>
               </div>
             </motion.button>
           </div>
