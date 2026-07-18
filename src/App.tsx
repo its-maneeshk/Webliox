@@ -10,6 +10,8 @@ import LauncherHome from './components/LauncherHome';
 import WebPreviewer from './components/WebPreviewer';
 import AddWebsiteForm from './components/AddWebsiteForm';
 import InfoModal from './components/InfoModal';
+import BrandLogo from './components/BrandLogo';
+import { motion, AnimatePresence } from 'motion/react';
 
 // Initial preloaded default applications
 const DEFAULT_APPS: WebApp[] = [
@@ -91,6 +93,15 @@ export default function App() {
   const [isDeviceMode, setIsDeviceMode] = useState(false);
   const [isMediaPlaying, setIsMediaPlaying] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [isSplashActive, setIsSplashActive] = useState(true);
+
+  // Splash countdown
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsSplashActive(false);
+    }, 1300);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Sync launcher app state changes to local storage
   useEffect(() => {
@@ -237,37 +248,91 @@ export default function App() {
       onLaunchExternal={selectedApp ? handleLaunchExternal : undefined}
       isMediaPlaying={isMediaPlaying}
     >
-      {selectedApp ? (
-        <WebPreviewer 
-          app={selectedApp} 
-          onClose={handleCloseApp} 
-          onMediaPlaying={setIsMediaPlaying} 
-        />
-      ) : currentView === 'add-app' ? (
-        <AddWebsiteForm 
-          onAddApp={handleAddApp} 
-          onCancel={() => {
-            if (window.history.state && window.history.state.view === 'add-app') {
-              window.history.back();
-            } else {
-              setCurrentView('home');
-            }
-          }} 
-        />
-      ) : (
-        <LauncherHome
-          apps={apps}
-          onLaunchApp={handleLaunchApp}
-          onAddAppClick={() => {
-            setCurrentView('add-app');
-            window.history.pushState({ view: 'add-app' }, '');
-          }}
-          onToggleFavorite={handleToggleFavorite}
-          onDeleteApp={handleDeleteApp}
-          recentApps={recentApps}
-          onInfoClick={() => setIsInfoOpen(true)}
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {isSplashActive ? (
+          <motion.div
+            key="splash-overlay"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+            className="absolute inset-0 bg-[#050505] z-50 flex flex-col items-center justify-center p-6 select-none"
+          >
+            <div className="flex flex-col items-center gap-4">
+              <BrandLogo size={80} animate={true} />
+              
+              <div className="flex flex-col items-center text-center mt-2">
+                <h1 className="text-xl font-bold tracking-wider text-white font-sans">webliox</h1>
+                <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase mt-0.5">the developer's portal</p>
+              </div>
+
+              {/* Minimal delicate progress indicator */}
+              <div className="w-24 h-[2px] bg-white/5 rounded-full mt-6 overflow-hidden relative">
+                <motion.div 
+                  initial={{ left: "-100%" }}
+                  animate={{ left: "100%" }}
+                  transition={{ repeat: Infinity, duration: 1.2, ease: "easeInOut" }}
+                  className="absolute top-0 bottom-0 w-1/2 bg-gradient-to-r from-transparent via-lime-400 to-transparent"
+                />
+              </div>
+            </div>
+            
+            <span className="absolute bottom-6 text-[9px] text-slate-600 font-mono tracking-widest uppercase">v2.1.0-release</span>
+          </motion.div>
+        ) : selectedApp ? (
+          <motion.div
+            key="app-portal"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="w-full h-full flex flex-col"
+          >
+            <WebPreviewer 
+              app={selectedApp} 
+              onClose={handleCloseApp} 
+              onMediaPlaying={setIsMediaPlaying} 
+            />
+          </motion.div>
+        ) : currentView === 'add-app' ? (
+          <motion.div
+            key="add-app-form"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="w-full h-full flex flex-col"
+          >
+            <AddWebsiteForm 
+              onAddApp={handleAddApp} 
+              onCancel={() => {
+                if (window.history.state && window.history.state.view === 'add-app') {
+                  window.history.back();
+                } else {
+                  setCurrentView('home');
+                }
+              }} 
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="launcher-home"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="w-full h-full flex flex-col overflow-hidden"
+          >
+            <LauncherHome
+              apps={apps}
+              onLaunchApp={handleLaunchApp}
+              onAddAppClick={() => {
+                setCurrentView('add-app');
+                window.history.pushState({ view: 'add-app' }, '');
+              }}
+              onToggleFavorite={handleToggleFavorite}
+              onDeleteApp={handleDeleteApp}
+              recentApps={recentApps}
+              onInfoClick={() => setIsInfoOpen(true)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Info & Legal Terms Modal Overlay */}
       <InfoModal isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />

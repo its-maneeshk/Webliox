@@ -1,12 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --color-bg-darkest: #050505;
   --color-bg-darker: #0a0a0a;
-  --color-bg-card: #1c1b1f;
-  --color-bg-pill: #2b2930;
-  --font-sans: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --color-bg-card: #15161b;
+  --color-bg-pill: #1f2128;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
 }
 
 /* Custom UI helpers */
@@ -33,3 +35,20 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+@keyframes path-glow {
+  0%, 100% {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+  50% {
+    stroke-dashoffset: 20;
+    opacity: 1;
+  }
+}
+
+.path-glow-animation {
+  stroke-dasharray: 100;
+  animation: path-glow 4s ease-in-out infinite;
+}
+
