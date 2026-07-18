@@ -38,6 +38,138 @@ export const getIconComponent = (iconName: string, size = 20, className = '') =>
 
 const CATEGORIES: AppCategory[] = ['All', 'AI', 'Design', 'Productivity', 'Entertainment', 'Utility', 'Custom'];
 
+// Renders an interactive miniature wireframe/preview mockup for the card background
+const renderMiniPreview = (app: WebApp) => {
+  const nameLower = app.name.toLowerCase();
+  
+  if (nameLower.includes('chatgpt') || nameLower.includes('ai')) {
+    return (
+      <div className="absolute bottom-0 right-0 w-[84px] h-[52px] opacity-25 group-hover:opacity-50 transition-all duration-300 overflow-hidden rounded-br-2xl rounded-tl-xl border-l border-t border-white/5 bg-neutral-950 p-1 flex flex-col gap-1 select-none pointer-events-none">
+        <div className="w-full flex items-center justify-between border-b border-white/5 pb-0.5">
+          <span className="text-[5px] text-slate-600 font-mono">GPT-4o</span>
+          <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
+        </div>
+        <div className="flex flex-col gap-0.5 flex-1 justify-end pb-0.5">
+          <div className="bg-emerald-950/40 rounded-[2px] p-0.5 max-w-[35px] self-start">
+            <div className="w-4 h-0.5 bg-emerald-400 rounded-full"></div>
+          </div>
+          <div className="bg-neutral-800 rounded-[2px] p-0.5 max-w-[45px] self-end">
+            <div className="w-6 h-0.5 bg-slate-400 rounded-full"></div>
+          </div>
+        </div>
+        <div className="h-2 bg-neutral-900 border border-white/5 rounded-[2px] mt-auto flex items-center px-1">
+          <div className="w-8 h-0.5 bg-neutral-700 rounded-full"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (nameLower.includes('netflix') || nameLower.includes('stream')) {
+    return (
+      <div className="absolute bottom-0 right-0 w-[84px] h-[52px] opacity-25 group-hover:opacity-50 transition-all duration-300 overflow-hidden rounded-br-2xl rounded-tl-xl border-l border-t border-white/5 bg-neutral-950 select-none pointer-events-none flex flex-col justify-between">
+        <div className="p-1 flex items-center justify-between">
+          <span className="text-[7px] text-red-600 font-black tracking-tighter">N</span>
+          <span className="text-[4px] text-slate-500">POPULAR</span>
+        </div>
+        <div className="px-1 flex gap-0.5 items-end pb-1">
+          <div className="w-5 h-6 bg-red-950/20 border border-white/5 rounded-[2px] shrink-0 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 rounded-full bg-red-600/35"></div>
+          </div>
+          <div className="w-5 h-6 bg-indigo-950/20 border border-white/5 rounded-[2px] shrink-0 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600/35"></div>
+          </div>
+          <div className="w-5 h-6 bg-emerald-950/20 border border-white/5 rounded-[2px] shrink-0 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-600/35"></div>
+          </div>
+        </div>
+        <div className="h-0.5 bg-red-600 w-[55%]"></div>
+      </div>
+    );
+  }
+
+  if (nameLower.includes('canva') || nameLower.includes('design') || nameLower.includes('palette')) {
+    return (
+      <div className="absolute bottom-0 right-0 w-[84px] h-[52px] opacity-25 group-hover:opacity-50 transition-all duration-300 overflow-hidden rounded-br-2xl rounded-tl-xl border-l border-t border-white/5 bg-neutral-950 p-1 select-none pointer-events-none flex flex-col gap-1">
+        <div className="flex justify-between items-center border-b border-white/5 pb-0.5">
+          <span className="text-[5px] text-indigo-400 font-bold">Canva</span>
+          <div className="flex gap-0.5">
+            <span className="w-1 h-1 rounded-full bg-blue-400"></span>
+            <span className="w-1 h-1 rounded-full bg-purple-400"></span>
+          </div>
+        </div>
+        <div className="flex-1 grid grid-cols-2 gap-0.5 items-center">
+          <div className="rounded-[2px] border border-indigo-500/20 aspect-video flex items-center justify-center bg-indigo-500/5">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400/40"></div>
+          </div>
+          <div className="rounded-[2px] border border-purple-500/20 aspect-video flex items-center justify-center bg-purple-500/5">
+            <div className="w-1.5 h-1.5 bg-purple-400/40 rotate-45"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (nameLower.includes('notion') || nameLower.includes('book') || nameLower.includes('notes') || nameLower.includes('workspace')) {
+    return (
+      <div className="absolute bottom-0 right-0 w-[84px] h-[52px] opacity-25 group-hover:opacity-50 transition-all duration-300 overflow-hidden rounded-br-2xl rounded-tl-xl border-l border-t border-white/5 bg-neutral-950 p-1 flex flex-col gap-1 select-none pointer-events-none">
+        <div className="flex items-center gap-1 border-b border-white/5 pb-0.5">
+          <span className="text-[6px] font-bold text-white">N</span>
+          <span className="text-[4px] text-slate-500">Docs</span>
+        </div>
+        <div className="flex flex-col gap-0.5 mt-0.5">
+          <div className="flex items-center gap-1">
+            <div className="w-1 h-1 border border-slate-600 rounded-[1px]"></div>
+            <div className="w-8 h-0.5 bg-slate-500 rounded-full"></div>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-1 h-1 border border-slate-600 rounded-[1px]"></div>
+            <div className="w-10 h-0.5 bg-slate-500 rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (nameLower.includes('photopea') || nameLower.includes('camera') || nameLower.includes('editor')) {
+    return (
+      <div className="absolute bottom-0 right-0 w-[84px] h-[52px] opacity-25 group-hover:opacity-50 transition-all duration-300 overflow-hidden rounded-br-2xl rounded-tl-xl border-l border-t border-white/5 bg-neutral-950 p-1 flex select-none pointer-events-none gap-1">
+        <div className="flex-1 flex flex-col justify-between border border-emerald-500/20 bg-emerald-500/5 p-0.5 rounded-[2px]">
+          <div className="w-full h-1 bg-neutral-900 border-b border-white/5"></div>
+          <div className="w-3.5 h-3.5 rounded-full border border-emerald-400/40 mx-auto flex items-center justify-center">
+            <div className="w-1 h-1 bg-emerald-400/60 rounded-full"></div>
+          </div>
+          <div className="w-full h-0.5 bg-neutral-900"></div>
+        </div>
+        <div className="w-3 flex flex-col gap-0.5 border-l border-white/5 pl-0.5 justify-center">
+          <div className="w-full h-0.5 bg-neutral-800 rounded-[1px]"></div>
+          <div className="w-full h-0.5 bg-neutral-800 rounded-[1px]"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Generic Dynamic Website Preview for custom apps
+  return (
+    <div className="absolute bottom-0 right-0 w-[84px] h-[52px] opacity-25 group-hover:opacity-50 transition-all duration-300 overflow-hidden rounded-br-2xl rounded-tl-xl border-l border-t border-white/5 bg-neutral-950 p-1 flex flex-col gap-1 select-none pointer-events-none">
+      <div className="flex items-center justify-between border-b border-white/5 pb-0.5">
+        <div className="flex gap-0.5">
+          <div className="w-0.5 h-0.5 rounded-full bg-red-500"></div>
+          <div className="w-0.5 h-0.5 rounded-full bg-yellow-500"></div>
+          <div className="w-0.5 h-0.5 rounded-full bg-green-500"></div>
+        </div>
+        <span className="text-[3px] text-slate-500 font-mono truncate max-w-[40px]">{app.url.replace('https://', '').replace('www.', '')}</span>
+      </div>
+      <div className="flex-1 flex flex-col justify-center gap-1 px-0.5">
+        <div className="w-full h-1 bg-indigo-500/10 rounded-[1px] border border-indigo-500/15"></div>
+        <div className="flex flex-col gap-0.5">
+          <div className="w-10 h-0.5 bg-slate-600 rounded-full"></div>
+          <div className="w-6 h-0.5 bg-slate-600 rounded-full"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function LauncherHome({
   apps,
   onLaunchApp,
@@ -48,6 +180,18 @@ export default function LauncherHome({
 }: LauncherHomeProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<AppCategory>('All');
+  const [profileName, setProfileName] = useState(() => {
+    return localStorage.getItem('webhub_profile_name_v2') || '';
+  });
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState(profileName);
+
+  const handleSaveName = () => {
+    const trimmed = tempName.trim();
+    setProfileName(trimmed);
+    localStorage.setItem('webhub_profile_name_v2', trimmed);
+    setIsEditingName(false);
+  };
 
   // Generate dynamic greeting based on simulated or system time
   const greeting = useMemo(() => {
@@ -83,12 +227,49 @@ export default function LauncherHome({
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none"></div>
 
       {/* Hero Welcome Header */}
-      <div className="px-6 pt-6 pb-4 relative z-10">
-        <span className="text-[10px] font-bold tracking-widest text-indigo-400 uppercase font-mono">Webliox Launcher</span>
-        <h2 className="text-2xl font-light text-white mt-1 leading-tight">
-          {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-indigo-400">Developer</span>
-        </h2>
-        <p className="text-xs text-slate-500 mt-1">Launch your workspaces</p>
+      <div className="px-6 pt-6 pb-4 relative z-10 flex justify-between items-start">
+        <div className="flex-1">
+          <span className="text-[10px] font-bold tracking-widest text-indigo-400 uppercase font-mono">webliox launcher</span>
+          
+          {isEditingName ? (
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <input
+                type="text"
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
+                placeholder="your name..."
+                maxLength={15}
+                className="bg-neutral-900 border border-white/10 rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 w-28 font-light"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSaveName();
+                  if (e.key === 'Escape') setIsEditingName(false);
+                }}
+              />
+              <button
+                onClick={handleSaveName}
+                className="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-2 py-1 rounded cursor-pointer transition-colors"
+              >
+                Save
+              </button>
+            </div>
+          ) : (
+            <h2 
+              onClick={() => {
+                setTempName(profileName);
+                setIsEditingName(true);
+              }}
+              className="text-2xl font-light text-white mt-1 leading-tight cursor-pointer group flex items-center gap-1 select-none"
+              title="Click to personalize name"
+            >
+              <span>{greeting.toLowerCase()}, </span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-indigo-400 border-b border-dashed border-indigo-400/30 group-hover:border-indigo-400 transition-colors">
+                {profileName ? profileName.toLowerCase() : 'friend'}
+              </span>
+            </h2>
+          )}
+          <p className="text-xs text-slate-500 mt-1">launch your workspaces</p>
+        </div>
       </div>
 
       {/* Quick Search Bar (Styled as md3-pill) */}
@@ -223,13 +404,16 @@ export default function LauncherHome({
                   transition={{ duration: 0.2 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => onLaunchApp(app)}
-                  className="group relative p-4 rounded-2xl bg-bg-card border border-white/5 hover:border-white/10 cursor-pointer flex flex-col justify-between h-[115px] hover:bg-[#25232a] transition-all shadow-sm"
+                  className="group relative p-4 rounded-2xl bg-bg-card border border-white/5 hover:border-white/10 cursor-pointer flex flex-col justify-between h-[115px] hover:bg-[#25232a] transition-all shadow-sm overflow-hidden"
                 >
                   {/* Decorative faint glow */}
                   <div className={`absolute -inset-px rounded-2xl bg-gradient-to-tr ${app.color} opacity-0 group-hover:opacity-5 transition-opacity blur-xs pointer-events-none`}></div>
 
+                  {/* Micro aesthetic website preview mockup */}
+                  {renderMiniPreview(app)}
+
                   {/* Card top half: Icon & Favorites Star */}
-                  <div className="flex justify-between items-start">
+                  <div className="flex justify-between items-start relative z-20">
                     <div className={`w-9 h-9 rounded-xl bg-gradient-to-tr ${app.color} flex items-center justify-center text-white shadow-md shadow-black/30 group-hover:scale-105 transition-transform`}>
                       {getIconComponent(app.iconName, 17)}
                     </div>
@@ -245,10 +429,10 @@ export default function LauncherHome({
                         <Star size={13} className={app.isFavorite ? 'fill-current' : ''} />
                       </button>
 
-                      {app.isCustom && onDeleteApp && (
+                      {onDeleteApp && (
                         <button
                           onClick={(e) => onDeleteApp(app.id, e)}
-                          className="p-1 rounded-full hover:bg-white/5 text-slate-500 hover:text-red-400 transition-colors"
+                          className="p-1 rounded-full hover:bg-white/5 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
                           title="Delete Application"
                         >
                           <Trash2 size={13} />
@@ -258,7 +442,7 @@ export default function LauncherHome({
                   </div>
 
                   {/* Card bottom half: Labels */}
-                  <div className="mt-3 min-w-0">
+                  <div className="mt-3 min-w-0 relative z-20">
                     <h3 className="font-bold text-slate-100 text-xs tracking-tight truncate flex items-center gap-1 group-hover:text-indigo-300 transition-colors">
                       {app.name}
                       <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0 text-slate-400" />
@@ -285,14 +469,6 @@ export default function LauncherHome({
             </motion.button>
           </div>
         )}
-      </div>
-
-      {/* Educational Footer for Junior Developers */}
-      <div className="px-6 py-4 border-t border-white/5 bg-bg-darker text-[10px] text-slate-400 text-center flex flex-col gap-1.5 leading-relaxed shrink-0">
-        <p className="font-mono text-indigo-400">Junior Dev Insights: State Architecture</p>
-        <p>
-          Currently, state is persisted in <strong>React Core LocalState</strong>. For our upcoming production code, we will wire this into <strong>AsyncStorage</strong> for Android to enable persistent offline storage!
-        </p>
       </div>
 
     </div>

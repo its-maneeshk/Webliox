@@ -87,7 +87,8 @@ export default function App() {
 
   const [selectedApp, setSelectedApp] = useState<WebApp | null>(null);
   const [currentView, setCurrentView] = useState<'home' | 'add-app'>('home');
-  const [isDeviceMode, setIsDeviceMode] = useState(true);
+  const [isDeviceMode, setIsDeviceMode] = useState(false);
+  const [isMediaPlaying, setIsMediaPlaying] = useState(false);
 
   // Sync launcher app state changes to local storage
   useEffect(() => {
@@ -99,9 +100,41 @@ export default function App() {
     localStorage.setItem('webhub_recents_v1', JSON.stringify(recentIds));
   }, [recentIds]);
 
+  // Intercept browser back / physical device back button
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      const state = event.state;
+      if (!state) {
+        setSelectedApp(null);
+        setCurrentView('home');
+        setIsMediaPlaying(false);
+      } else if (state.appOpened) {
+        const app = apps.find(a => a.id === state.appId);
+        if (app) {
+          setSelectedApp(app);
+        } else {
+          setSelectedApp(null);
+        }
+        setCurrentView('home');
+        setIsMediaPlaying(false);
+      } else if (state.view === 'add-app') {
+        setSelectedApp(null);
+        setCurrentView('add-app');
+        setIsMediaPlaying(false);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [apps]);
+
   // Launch application portal
   const handleLaunchApp = (app: WebApp) => {
     setSelectedApp(app);
+    setIsMediaPlaying(false);
+    window.history.pushState({ appOpened: true, appId: app.id }, '');
     // Push to recents (and remove duplicates to bubble up the latest item)
     setRecentIds(prev => {
       const filtered = prev.filter(id => id !== app.id);
@@ -111,7 +144,12 @@ export default function App() {
 
   // Close website portal and go back to launcher dashboard
   const handleCloseApp = () => {
-    setSelectedApp(null);
+    setIsMediaPlaying(false);
+    if (window.history.state && window.history.state.appOpened) {
+      window.history.back();
+    } else {
+      setSelectedApp(null);
+    }
   };
 
   // Triggered when refreshing web preview
@@ -174,16 +212,33 @@ export default function App() {
       onGoBack={selectedApp ? handleCloseApp : undefined}
       onRefresh={selectedApp ? handleRefreshApp : undefined}
       onLaunchExternal={selectedApp ? handleLaunchExternal : undefined}
+      isMediaPlaying={isMediaPlaying}
     >
       {selectedApp ? (
-        <WebPreviewer app={selectedApp} onClose={handleCloseApp} />
+        <WebPreviewer 
+          app={selectedApp} 
+          onClose={handleCloseApp} 
+          onMediaPlaying={setIsMediaPlaying} 
+        />
       ) : currentView === 'add-app' ? (
-        <AddWebsiteForm onAddApp={handleAddApp} onCancel={() => setCurrentView('home')} />
+        <AddWebsiteForm 
+          onAddApp={handleAddApp} 
+          onCancel={() => {
+            if (window.history.state && window.history.state.view === 'add-app') {
+              window.history.back();
+            } else {
+              setCurrentView('home');
+            }
+          }} 
+        />
       ) : (
         <LauncherHome
           apps={apps}
           onLaunchApp={handleLaunchApp}
-          onAddAppClick={() => setCurrentView('add-app')}
+          onAddAppClick={() => {
+            setCurrentView('add-app');
+            window.history.pushState({ view: 'add-app' }, '');
+          }}
           onToggleFavorite={handleToggleFavorite}
           onDeleteApp={handleDeleteApp}
           recentApps={recentApps}

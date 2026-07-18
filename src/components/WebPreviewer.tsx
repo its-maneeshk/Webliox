@@ -14,9 +14,10 @@ import { WebApp } from '../types';
 interface WebPreviewerProps {
   app: WebApp;
   onClose: () => void;
+  onMediaPlaying?: (isPlaying: boolean) => void;
 }
 
-export default function WebPreviewer({ app, onClose }: WebPreviewerProps) {
+export default function WebPreviewer({ app, onClose, onMediaPlaying }: WebPreviewerProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [iframeError, setIframeError] = useState(false);
   const [simulatedProgress, setSimulatedProgress] = useState(10);
@@ -37,6 +38,28 @@ export default function WebPreviewer({ app, onClose }: WebPreviewerProps) {
 
   // Netflix State
   const [isPlaying, setIsPlaying] = useState(false);
+  const [videoProgress, setVideoProgress] = useState(15);
+
+  // Sync isPlaying state to Device Frame wrapper
+  useEffect(() => {
+    onMediaPlaying?.(isPlaying);
+    return () => {
+      onMediaPlaying?.(false);
+    };
+  }, [isPlaying, onMediaPlaying]);
+
+  // Video playback timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setVideoProgress(p => (p >= 100 ? 0 : p + 1));
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPlaying]);
 
   // Determine if URL is iframe-safe or blocks iframes (X-Frame-Options restrictions)
   const isIframeBlocked = (url: string): boolean => {
@@ -248,57 +271,123 @@ export default function WebPreviewer({ app, onClose }: WebPreviewerProps) {
                 </div>
               ) : app.name.toLowerCase().includes('netflix') ? (
                 /* NETFLIX MOCK SIMULATION */
-                <div className="flex-1 flex flex-col bg-[#000] h-full p-4 overflow-y-auto font-sans text-slate-100 custom-scrollbar">
-                  {/* Hero Trailer */}
-                  <div className="relative rounded-2xl overflow-hidden h-40 bg-bg-card border border-white/5 mb-5 flex items-end p-4">
-                    <div className="absolute inset-0 bg-gradient-to-t from-bg-darkest via-bg-darkest/40 to-transparent z-10"></div>
-                    <div className="absolute inset-0 bg-cover bg-center opacity-40 bg-[url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800')]"></div>
-                    <div className="relative z-20 max-w-xs">
-                      <span className="text-[9px] font-bold text-red-500 uppercase tracking-widest flex items-center gap-1 font-mono">
-                        <Sparkles size={9} className="fill-current" /> Original Series
-                      </span>
-                      <h3 className="text-sm font-bold text-white mt-1">Stellar Launchers</h3>
-                      <p className="text-[10px] text-slate-400 line-clamp-2 mt-1 leading-normal">A story about young coders forging full-stack mobile applications from browser sandboxes.</p>
-                      
-                      <button 
-                        onClick={() => setIsPlaying(!isPlaying)}
-                        className="mt-2 flex items-center gap-1 bg-white hover:bg-slate-200 text-slate-950 font-bold text-[9px] px-2.5 py-1 rounded transition-colors cursor-pointer"
+                isPlaying ? (
+                  /* PORTRAIT FULLSCREEN THEATER PLAYER WITH DYNAMIC IMMERSIVE LAYOUT */
+                  <div className="flex-1 flex flex-col bg-black h-full relative justify-between p-5 select-none overflow-hidden animate-fadeIn">
+                    {/* Immersive cinematic background video glow */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#000] via-[#050505]/40 to-[#000] z-10 pointer-events-none"></div>
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center opacity-60 scale-105 animate-pulse bg-[url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800')]"
+                      style={{ transition: 'transform 10s ease-in-out' }}
+                    ></div>
+
+                    {/* Top Control Bar */}
+                    <div className="relative z-20 flex justify-between items-center pt-1.5">
+                      <button
+                        onClick={() => setIsPlaying(false)}
+                        className="flex items-center gap-1.5 bg-neutral-900/80 hover:bg-neutral-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-md cursor-pointer transition-all"
+                        title="Exit Immersive Stream"
                       >
-                        <Play size={9} className="fill-current" />
-                        <span>{isPlaying ? 'Pause Movie' : 'Watch Trailer'}</span>
+                        <ArrowLeft size={11} />
+                        <span>Back</span>
                       </button>
+                      <span className="text-[8px] font-mono font-bold text-red-500 uppercase tracking-wider px-2 py-0.5 rounded bg-red-950/50 border border-red-500/20">
+                        HD • DOLBY
+                      </span>
+                    </div>
+
+                    {/* Central Playback Controls Overlay */}
+                    <div className="relative z-20 flex flex-col items-center justify-center gap-2">
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setIsPlaying(false)}
+                        className="w-16 h-16 rounded-full bg-red-600/25 hover:bg-red-600/40 border border-red-500/40 flex items-center justify-center text-white cursor-pointer backdrop-blur-sm shadow-xl shadow-red-900/35"
+                      >
+                        <span className="w-4 h-4 border-l-4 border-r-4 border-white inline-block"></span>
+                      </motion.button>
+                      <p className="text-xs font-bold text-white tracking-wide mt-2">Stellar Launchers</p>
+                      <p className="text-[9px] text-slate-400 font-medium">Streaming Episode 1: "The Core UI Sandbox"</p>
+                    </div>
+
+                    {/* Bottom Cinematic Control Panel */}
+                    <div className="relative z-20 flex flex-col gap-2.5 pb-2">
+                      {/* Interactive Scrubber and Elapsed Timers */}
+                      <div className="flex flex-col gap-1">
+                        <div className="relative h-1 w-full bg-white/20 rounded-full overflow-hidden">
+                          <div 
+                            className="absolute top-0 left-0 h-full bg-red-600 rounded-full transition-all duration-1000"
+                            style={{ width: `${videoProgress}%` }}
+                          ></div>
+                        </div>
+                        <div className="flex justify-between items-center text-[8px] font-mono text-slate-400">
+                          <span>0:{videoProgress.toString().padStart(2, '0')}</span>
+                          <span>2:15</span>
+                        </div>
+                      </div>
+
+                      {/* Video attributes and dynamic subtitle indicator */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] text-slate-500 font-medium">CC English [Subtitles On]</span>
+                        <div className="flex items-center gap-1 text-[9px] font-bold text-red-500">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping"></span>
+                          <span>Auto-playing</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-
-                  {/* Dynamic Playback Overlay */}
-                  {isPlaying && (
-                    <div className="mb-4 p-2.5 bg-red-950/20 border border-red-500/20 rounded-xl flex items-center gap-2.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></div>
-                      <span className="text-[10px] font-bold text-slate-300">Simulating Active Media Stream...</span>
-                    </div>
-                  )}
-
-                  {/* Category lists */}
-                  <div>
-                    <h4 className="text-[10px] font-bold text-slate-500 mb-3 uppercase tracking-wider font-mono">Top Picks for You</h4>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="group rounded-xl overflow-hidden bg-bg-card border border-white/5 p-2 cursor-pointer hover:bg-[#25232a]">
-                        <div className="h-16 bg-indigo-950/20 rounded-lg flex items-center justify-center text-indigo-400 font-bold mb-2">
-                          <Film size={18} />
-                        </div>
-                        <p className="text-[10px] font-bold text-slate-200">The Native Code</p>
-                        <p className="text-[9px] text-slate-500 mt-0.5">Sci-Fi • 98% Match</p>
+                ) : (
+                  <div className="flex-1 flex flex-col bg-[#000] h-full p-4 overflow-y-auto font-sans text-slate-100 custom-scrollbar">
+                    {/* Hero Trailer */}
+                    <div className="relative rounded-2xl overflow-hidden h-40 bg-bg-card border border-white/5 mb-5 flex items-end p-4">
+                      <div className="absolute inset-0 bg-gradient-to-t from-bg-darkest via-bg-darkest/40 to-transparent z-10"></div>
+                      <div className="absolute inset-0 bg-cover bg-center opacity-40 bg-[url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800')]"></div>
+                      <div className="relative z-20 max-w-xs">
+                        <span className="text-[9px] font-bold text-red-500 uppercase tracking-widest flex items-center gap-1 font-mono">
+                          <Sparkles size={9} className="fill-current" /> Original Series
+                        </span>
+                        <h3 className="text-sm font-bold text-white mt-1">Stellar Launchers</h3>
+                        <p className="text-[10px] text-slate-400 line-clamp-2 mt-1 leading-normal">A story about young coders forging full-stack mobile applications from browser sandboxes.</p>
+                        
+                        <button 
+                          onClick={() => setIsPlaying(true)}
+                          className="mt-2 flex items-center gap-1 bg-white hover:bg-slate-200 text-slate-950 font-bold text-[9px] px-2.5 py-1 rounded transition-colors cursor-pointer"
+                        >
+                          <Play size={9} className="fill-current" />
+                          <span>Watch Trailer</span>
+                        </button>
                       </div>
-                      <div className="group rounded-xl overflow-hidden bg-bg-card border border-white/5 p-2 cursor-pointer hover:bg-[#25232a]">
-                        <div className="h-16 bg-violet-950/20 rounded-lg flex items-center justify-center text-violet-400 font-bold mb-2">
-                          <Film size={18} />
+                    </div>
+
+                    {/* Dynamic Playback Overlay */}
+                    {isPlaying && (
+                      <div className="mb-4 p-2.5 bg-red-950/20 border border-red-500/20 rounded-xl flex items-center gap-2.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></div>
+                        <span className="text-[10px] font-bold text-slate-300">Simulating Active Media Stream...</span>
+                      </div>
+                    )}
+
+                    {/* Category lists */}
+                    <div>
+                      <h4 className="text-[10px] font-bold text-slate-500 mb-3 uppercase tracking-wider font-mono">Top Picks for You</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="group rounded-xl overflow-hidden bg-bg-card border border-white/5 p-2 cursor-pointer hover:bg-[#25232a]" onClick={() => setIsPlaying(true)}>
+                          <div className="h-16 bg-indigo-950/20 rounded-lg flex items-center justify-center text-indigo-400 font-bold mb-2">
+                            <Film size={18} />
+                          </div>
+                          <p className="text-[10px] font-bold text-slate-200">The Native Code</p>
+                          <p className="text-[9px] text-slate-500 mt-0.5">Sci-Fi • 98% Match</p>
                         </div>
-                        <p className="text-[10px] font-bold text-slate-200">MMKV Chronicles</p>
-                        <p className="text-[9px] text-slate-500 mt-0.5">Thriller • 95% Match</p>
+                        <div className="group rounded-xl overflow-hidden bg-bg-card border border-white/5 p-2 cursor-pointer hover:bg-[#25232a]" onClick={() => setIsPlaying(true)}>
+                          <div className="h-16 bg-violet-950/20 rounded-lg flex items-center justify-center text-violet-400 font-bold mb-2">
+                            <Film size={18} />
+                          </div>
+                          <p className="text-[10px] font-bold text-slate-200">MMKV Chronicles</p>
+                          <p className="text-[9px] text-slate-500 mt-0.5">Thriller • 95% Match</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )
               ) : app.name.toLowerCase().includes('canva') || app.name.toLowerCase().includes('photopea') ? (
                 /* CANVA / DESIGN MOCK SIMULATION */
                 <div className="flex-1 flex flex-col bg-bg-darkest h-full p-4 overflow-y-auto font-sans text-slate-100 custom-scrollbar">
