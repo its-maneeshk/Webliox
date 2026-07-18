@@ -46,7 +46,7 @@ export default function DeviceFrame({
 
   if (!isDeviceMode) {
     return (
-      <div id="webhub-fullscreen-root" className="min-h-screen bg-bg-darkest text-[#e0e0e0] flex flex-col font-sans transition-all duration-300">
+      <div id="webliox-fullscreen-root" className="min-h-screen bg-bg-darkest text-[#e0e0e0] flex flex-col font-sans transition-all duration-300">
         {/* Full-screen top-bar */}
         <header className="flex items-center justify-between px-6 py-4 bg-bg-darker border-b border-white/10 sticky top-0 z-50">
           <div className="flex items-center gap-3">
@@ -54,7 +54,7 @@ export default function DeviceFrame({
               W
             </div>
             <div>
-              <h1 className="font-bold tracking-tight text-white leading-tight text-sm">WebHub Desktop</h1>
+              <h1 className="font-bold tracking-tight text-white leading-tight text-sm">Webliox Desktop</h1>
               <p className="text-[10px] text-slate-400 font-mono">Full-Screen Launcher Dashboard</p>
             </div>
           </div>
@@ -94,7 +94,7 @@ export default function DeviceFrame({
   }
 
   return (
-    <div id="webhub-simulator-root" className="min-h-screen bg-bg-darkest text-[#e0e0e0] flex flex-col font-sans overflow-hidden">
+    <div id="webliox-simulator-root" className="min-h-screen bg-bg-darkest text-[#e0e0e0] flex flex-col font-sans overflow-hidden">
       
       {/* Top Professional Header (IDE window wrapper) */}
       <header className="h-14 border-b border-white/10 flex items-center justify-between px-6 bg-bg-darker select-none shrink-0">
@@ -106,7 +106,7 @@ export default function DeviceFrame({
             <div className="w-3 h-3 rounded-full bg-[#27c93f]"></div>
           </div>
           <span className="text-[11px] font-bold tracking-widest text-slate-500 uppercase font-mono">
-            WebHub Workspace — feat/initial-ui-setup
+            Webliox Workspace — feat/initial-ui-setup
           </span>
         </div>
         <div className="flex items-center gap-4 text-[10px] font-semibold text-indigo-400 font-mono">
@@ -132,7 +132,7 @@ export default function DeviceFrame({
             
             {/* Visual File Tree Mock */}
             <div className="font-mono text-[11px] space-y-2 opacity-90 text-slate-300">
-              <div className="text-indigo-400 font-bold">▼ WebHub-Mobile/</div>
+              <div className="text-indigo-400 font-bold">▼ Webliox-Mobile/</div>
               <div className="pl-4 text-slate-400">▼ src/</div>
               <div className="pl-8 text-indigo-300">▼ components/</div>
               <div className="pl-12 flex items-center gap-1 text-slate-300">
@@ -178,7 +178,7 @@ export default function DeviceFrame({
           <div className="mb-4 flex flex-col items-center gap-1.5 z-10 text-center max-w-sm">
             <h1 className="text-sm font-bold text-slate-100 tracking-tight flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-              <span>WebHub Android Emulator</span>
+              <span>Webliox Android Emulator</span>
             </h1>
             <p className="text-[10px] text-slate-400">
               Interactive high-fidelity prototype. Click widgets, launch cards, and toggle views just like a real phone!
@@ -231,7 +231,7 @@ export default function DeviceFrame({
                   </div>
                 )}
                 <span className="font-bold text-[13px] tracking-tight text-white truncate max-w-[150px]">
-                  {selectedAppName || 'WebHub Launcher'}
+                  {selectedAppName || 'Webliox Launcher'}
                 </span>
               </div>
 

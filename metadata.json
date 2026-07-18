@@ -1,6 +1,6 @@
 {
-  "name": "WebHub",
-  "description": "A beautiful launcher and dashboard for your favorite web applications.",
+  "name": "Webliox",
+  "description": "Turn Any Website Into an App.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

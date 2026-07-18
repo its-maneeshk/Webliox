@@ -84,7 +84,7 @@ export default function LauncherHome({
 
       {/* Hero Welcome Header */}
       <div className="px-6 pt-6 pb-4 relative z-10">
-        <span className="text-[10px] font-bold tracking-widest text-indigo-400 uppercase font-mono">WebHub Launcher</span>
+        <span className="text-[10px] font-bold tracking-widest text-indigo-400 uppercase font-mono">Webliox Launcher</span>
         <h2 className="text-2xl font-light text-white mt-1 leading-tight">
           {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-indigo-400">Developer</span>
         </h2>
