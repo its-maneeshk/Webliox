@@ -99,6 +99,61 @@ export default function WebPreviewer({ app, onClose, onMediaPlaying }: WebPrevie
     };
   }, [app]);
 
+  // Support physical hardware back button interception & conditional navigation
+  useEffect(() => {
+    // 1. Intercept Cordova/Capacitor generic document 'backbutton' event
+    const handleHardwareBackButton = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const iframe = iframeRef.current;
+      if (iframe) {
+        try {
+          // If iframe is on same origin and has history, go back inside it
+          if (iframe.contentWindow && iframe.contentWindow.history.length > 1) {
+            iframe.contentWindow.history.back();
+            return;
+          }
+        } catch (err) {
+          // Cross-origin blocks iframe history inspection, fall back to closing
+          console.warn("Cross-origin URL or restricted history: exiting iframe and closing previewer");
+        }
+      }
+      
+      // If no iframe history exists or it is blocked, safely close the container & go home
+      onClose();
+    };
+
+    document.addEventListener('backbutton', handleHardwareBackButton);
+
+    // 2. Intercept Capacitor native core bridge back-button listener if available
+    let capacitorListener: any = null;
+    const registerCapacitorBack = async () => {
+      try {
+        const cap = (window as any).Capacitor;
+        if (cap && cap.Plugins && cap.Plugins.App) {
+          capacitorListener = await cap.Plugins.App.addListener('backButton', (data: any) => {
+            if (data.canGoBack) {
+              window.history.back();
+            } else {
+              onClose();
+            }
+          });
+        }
+      } catch (err) {
+        console.log("Capacitor core listener skipped (Web preview mode)", err);
+      }
+    };
+    registerCapacitorBack();
+
+    return () => {
+      document.removeEventListener('backbutton', handleHardwareBackButton);
+      if (capacitorListener && typeof capacitorListener.remove === 'function') {
+        capacitorListener.remove();
+      }
+    };
+  }, [onClose]);
+
   // Handle external launch
   const handleLaunchExternal = () => {
     window.open(app.url, '_blank', 'noopener,noreferrer');
